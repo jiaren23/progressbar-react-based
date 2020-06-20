@@ -1,36 +1,37 @@
+import Result from './Result.jsx'
 
-
-class InputTextWithPriview extends React.Component{
+class InputTest extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            value : "進度條線上課程" ,
-         
+            title: "見條"
         }
     }
+    
+    handler = (e)=>{
+        console.log(e.target.value)
+        const {name,value} = e.target;
+       this.setState({
+           [name]: value
+       }) 
+    }
 
-    handler(e){
-        this.setState({
-            value : e.target.value,
-        })
-    } 
     render(){
-        return (
+        return(
             <div>
-                <h1 id="tittle">{this.state.value}</h1>
-                <input type="text" 
-                       id="text_input" 
-                       value={this.state.value} 
-                       onChange={this.handler.bind(this)}
+                <h1>{this.state.title}</h1>
+                <input 
+                    type="text" 
+                    value={this.state.title} 
+                    name= "title"
+                    onChange={this.handler}
                 />
-                </div>
-        )
+            </div>
+            )
     }
 }
 
-
-
 ReactDOM.render(
-    <InputTextWithPriview/>,
+    <InputTest/>,
     document.getElementById("root")
 )
