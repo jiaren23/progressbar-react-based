@@ -6,7 +6,7 @@ export default class Result extends React.Component {
         this.postalCode = TaiwanPostalCode;
         this.cities = Object.keys(TaiwanPostalCode); // 抓取 json 的 所有key 值 以陣列方式存進 this.cities
         this.state = {
-            cities: "新竹市" // 讓 select 預設是 新竹市
+            city: "基隆市", // 讓 select 預設是 新竹市
         }
     }
 
@@ -24,7 +24,6 @@ export default class Result extends React.Component {
        return  cities.map((city) => {
             return (<option key={city}>{city}</option>)
             /* 這裡 option 裡面有個 key 屬性 是react 特有的屬性 ，可以丟入 值或是索引 讓react 知道這段陣列 是重複的將不再重複 render 以增加效能 */
-            
         })
     }
 
@@ -36,7 +35,7 @@ export default class Result extends React.Component {
             <div>
                 <label htmlFor="">
                     城市
-                    <select name="cities" onChange={this.citiesHandler} value={this.state.cities}>
+                    <select name="cities" onChange={this.citiesHandler} value={this.state.city}>
                         {optionCities}
                     </select>
                 </label>
