@@ -4,51 +4,92 @@ export default class Result extends React.Component {
     constructor(props) {
         super(props)
         this.postalCode = TaiwanPostalCode;
-        this.cities = Object.keys(TaiwanPostalCode); // 抓取 json 的 所有key 值 以陣列方式存進 this.cities
+        this.cities = Object.keys(TaiwanPostalCode);
         this.state = {
-            city: "基隆市", // 讓 select 預設是 新竹市
+            city: "台北市",
+            district: "",
+            postalCode: "",
+            address: ""
         }
     }
 
+    // citiesHandler = (e) => {
+    //     const { name, value } = e.target
+    //     if (name == "city" && this.state.city != value) {  //這裡為了解決 選了新市後 區沒辦法跟上 而去在背後一樣保留上一次的區資料
+    //         this.setState(
+    //             {
+    //                 [name]: value,
+    //                 district: ""
+    //             },
+    //             () => { console.log(this.state) }
+    //         )
+    //     } else {
+    //         this.setState({ [name]: value },
+    //             () => { console.log(this.state) }
+    //         )
+    //     }
+    // }
+
     citiesHandler = (e) => {
-        console.log(this.state) // 打印出 上一次選擇的
         const { name, value } = e.target
-        this.setState(
-            { [name]: value },
-            () => { console.log(this.state) } // 這裡才會是 當次選擇的
+        let mergeObject = {};
+        if (name == "city" && this.state.city != value) {  //這裡為了解決 選了新市後 區沒辦法跟上 而去在背後一樣保留上一次的區資料
+            mergeObject['district'] = "";
+            mergeObject['postalCode'] = "";
+        } else if(name == "district" && this.state.district != value){
+            const citiesData = this.postalCode[this.state.city];
+            const postalCode = citiesData[value];
+            mergeObject['postalCode'] = postalCode;
+        }
+
+        this.setState({ ...mergeObject , [name]: value },
+           () => { console.log(this.state) }
         )
-        console.log(this.state) // 原先以為這裡已經是setState 後更新了 但因為 setState 是非同步 所以這邊打印出來結果也會是 上一次選擇的
+        
     }
 
     getCities = (cities) => {
-       return  cities.map((city) => {
-            return (<option key={city}>{city}</option>)
-            /* 這裡 option 裡面有個 key 屬性 是react 特有的屬性 ，可以丟入 值或是索引 讓react 知道這段陣列 是重複的將不再重複 render 以增加效能 */
+        return cities.map((city) => {
+            return (<option key={city} value={city}>{city}</option>)
+        })
+    }
+    getDistricts = (districts) => {
+        return districts.map((district) => {
+            return (<option key={district} value={district}>{district}</option>)
         })
     }
 
-    render = ()=>{
-        // 這裡是在 render function 的 return 之前 所以可以在此進行 變數相關作業 再塞入底下 return 進行 正式的 render
+    render = () => {
+        const citiesData = this.postalCode[this.state.city]
+        const districts = Object.keys(citiesData) // 找到市底下的區
         const optionCities = this.getCities(this.cities)
-
+        const optionDistricts = this.getDistricts(districts)
         return (
             <div>
                 <label htmlFor="">
                     城市
-                    <select name="cities" onChange={this.citiesHandler} value={this.state.city}>
+                    <select name="city" onChange={this.citiesHandler} value={this.state.city}>
                         {optionCities}
                     </select>
                 </label>
                 <br />
                 <label htmlFor="">
                     市/區
-                    <select name="" id="">
-                        <option value="">中正區</option>
-                        <option value="">大同區</option>
+                    <select name="district" onChange={this.citiesHandler} value={this.state.district}>
+                        {optionDistricts}
                     </select>
                 </label>
+                <br/>
+                <label>
+                    郵遞區號
+                    <input type="text" name="postalCode" value={this.state.postalCode} disabled={true} />  {/* disabled={true} 讓使用者不會誤輸入 */}
+                </label>
+                <br/>
+                地址
+                <label htmlFor="">
+                    <input type="text" name="address" onChange={this.citiesHandler}/>
+                </label>
             </div>
-
         )
     }
 }
